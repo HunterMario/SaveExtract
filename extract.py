@@ -1,16 +1,21 @@
 """
 Extracts save files from the save directory and outputs them in a format that can be interpreted through an app such as JKSV.
 
-Script originally written by Suchmememanyskill and modified by HunterMario to add Unix support 
+Script originally written by suchmememanyskill and modified by HunterMario to add Unix support 
 """
 
 import subprocess, os
 
 
 def findInText(txt, find) -> str:
-    for x in txt.split("\\r\\n"):
-        if find in x:
-            return x.split(":")[1].strip()
+    if os.name == "posix":
+        for x in txt.split("\\n"):
+            if find in x:
+                return x.split(":")[1].strip()
+    else:
+        for x in txt.split("\\r\\n"):
+            if find in x:
+                return x.split(":")[1].strip()
     raise ValueError
 
 def hactoolPrep():
@@ -45,7 +50,6 @@ if __name__ == "__main__":
 
         print(f"Extracting {fileName}")
         text = getHactoolOutput(fileName)
-
         # findInText() may raise a ValueError if "Title ID" is not found in the file
         try:
             portion = findInText(text, "Title ID:").upper()
